@@ -35,6 +35,9 @@ int main(int argc, char *argv[]) {
 
   printf("{\n");
   for (auto module : Yosys::yosys_design->modules()) {
+    if (module->name.begins_with("$paramod"))
+      continue;
+
     printf("\t{\n");
     printf("\t\t\"name\": \"%s\",\n", module->name.c_str() + 1);
 
