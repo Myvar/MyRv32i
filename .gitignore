@@ -21,3 +21,4 @@ __pycache__
 build
 .cache
 .$MyRv32I.drawio.dtmp
+tmp
