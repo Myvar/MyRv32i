@@ -33,8 +33,11 @@ int main(int argc, char *argv[]) {
   Yosys::run_pass("prep");
   Yosys::run_pass("opt -full");
 
-  printf("{\n");
-  for (auto module : Yosys::yosys_design->modules()) {
+  printf("[\n");
+  auto modules = Yosys::yosys_design->modules().to_vector();
+  for (int m = 0; m < modules.size(); m++) {
+    auto module = modules.at(m);
+
     if (module->name.begins_with("$paramod"))
       continue;
 
@@ -44,7 +47,8 @@ int main(int argc, char *argv[]) {
     auto ports = module->ports;
 
     printf("\t\t\"ports\": [\n");
-    for (auto port : ports) {
+    for (int p = 0; p < ports.size(); ++p) {
+      auto port = ports.at(p);
       auto *w = module->wire(port);
 
       printf("\t\t\t{\n");
@@ -52,10 +56,16 @@ int main(int argc, char *argv[]) {
       printf("\t\t\t\t\"width\": \%d,\n", w->width);
       // this does not account for inout ports but not now
       printf("\t\t\t\t\"input\": \%s\n", w->port_input ? "true" : "false");
-      printf("\t\t\t},\n");
+      if (p + 1 >= ports.size())
+        printf("\t\t\t}\n");
+      else
+        printf("\t\t\t},\n");
     }
     printf("\t\t]\n");
-    printf("\t},\n");
+    if (m + 1 >= modules.size())
+      printf("\t}\n");
+    else
+      printf("\t},\n");
   }
 
   printf("]\n");
