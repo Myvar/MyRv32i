@@ -282,21 +282,6 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="pHQBSKNXJPz8SyYSF_2L-291" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=#B20000;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=11;fontColor=default;labelBackgroundColor=default;jumpStyle=arc;jumpSize=10;endArrow=classic;fillColor=#e51400;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="pHQBSKNXJPz8SyYSF_2L-133" target="pHQBSKNXJPz8SyYSF_2L-181">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="60" y="615" />
-              <mxPoint x="60" y="670" />
-              <mxPoint x="-80" y="670" />
-              <mxPoint x="-80" y="120" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="pHQBSKNXJPz8SyYSF_2L-292" value="Regs Mux Error" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];labelBackgroundColor=none;" vertex="1" connectable="0" parent="pHQBSKNXJPz8SyYSF_2L-291">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="140" y="165" as="offset" />
-          </mxGeometry>
-        </mxCell>
         <mxCell id="pHQBSKNXJPz8SyYSF_2L-133" value="Regs de/m&lt;span style=&quot;background-color: initial;&quot;&gt;ux&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;rotation=90;fillStyle=hatch;strokeColor=#B09500;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=11;fontColor=default;labelBackgroundColor=default;fillColor=#e3c800;" vertex="1" parent="1">
           <mxGeometry x="-130" y="390" width="390" height="60" as="geometry" />
         </mxCell>
