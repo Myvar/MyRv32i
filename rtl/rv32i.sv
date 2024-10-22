@@ -14,9 +14,9 @@ module rv32i (
     output o_booted
 );
   core u_core (
-    .clk(clk),
-    .clk_en(booted),
-    .rst(rstrst)
+    .i_clk(i_clk),
+    .i_clk_en(i_clk_en),
+    .i_rst(i_rst)
   );
 
 
