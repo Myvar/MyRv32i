@@ -26,4 +26,4 @@ jobs:
       env:
         SVLINT_CONFIG: .svlint.toml
     - name: Formal verification
-      run: "sby -f ./rtl/**/*.sby"
+      run: "chmod +x ./automation/fv.sh && ./automation/fv.sh"
