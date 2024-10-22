@@ -22,5 +22,6 @@ jobs:
       with:
         files: |
           rtl/*.sv
+          rtl/components/*.sv
       env:
         SVLINT_CONFIG: .svlint.toml

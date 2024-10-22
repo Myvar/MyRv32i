@@ -1,14 +1,13 @@
 `timescale 1ns / 1ps
-
-`include "types.svh"
+`default_nettype none
 
 module core #(
-    ADDR_WIDTH = 31,
-    DATA_WIDTH = 31
+    parameter int ADDR_WIDTH = 31,
+    parameter int DATA_WIDTH = 31
 ) (
-    input clk,
-    input clk_en,
-    input rst,
+    input i_clk,
+    input i_clk_en,
+    input i_rst
 );
 
 endmodule

@@ -1,21 +1,22 @@
 `timescale 1ns / 1ps
+`default_nettype none
 
 module rv32i (
-    input clk,
-    input clk_en,
-    input rst,
+    input i_clk,
+    input i_clk_en,
+    input i_rst,
 
     //UART
-    input rx,
-    output tx,
+    input i_rx,
+    output o_tx,
 
     //Booted
-    output booted
+    output o_booted
 );
   core u_core (
     .clk(clk),
     .clk_en(booted),
-    .rst(rstrst),
+    .rst(rstrst)
   );
 
 
