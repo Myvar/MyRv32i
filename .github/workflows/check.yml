@@ -22,8 +22,7 @@ jobs:
       uses: dalance/svlint-action@master
       with:
         files: |
-          rtl/*.sv
-          rtl/components/*.sv
+          rtl/**/*.sv
       env:
         SVLINT_CONFIG: .svlint.toml
     - name: Formal verification
