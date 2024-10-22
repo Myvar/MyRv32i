@@ -10,16 +10,16 @@ on:
  
 jobs: 
  lint: 
- runs-on: ubuntu-latest 
- steps: 
-  - name: Checkout code 
-    uses: actions/checkout@v2 
-    with: 
-      ref: ${{ github.event.pull_request.head.sha }} 
-    
-    uses: dalance/svlint-action@master
-    with:
-      files: |
-        rtl/*.sv
-    env:
-      SVLINT_CONFIG: .svlint.toml
+  runs-on: ubuntu-latest 
+  steps: 
+    - name: Checkout code 
+      uses: actions/checkout@v2 
+      with: 
+        ref: ${{ github.event.pull_request.head.sha }} 
+      
+      uses: dalance/svlint-action@master
+      with:
+        files: |
+          rtl/*.sv
+      env:
+        SVLINT_CONFIG: .svlint.toml
