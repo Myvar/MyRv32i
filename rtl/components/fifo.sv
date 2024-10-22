@@ -1,8 +1,11 @@
+`timescale 1ns / 1ps
+`default_nettype none
+
 module fifo #(
-    parameter DATA_WIDTH = 32,
-    parameter DEPTH = 32,
-    localparam DW = DATA_WIDTH
-}(
+    parameter int DATA_WIDTH = 32,
+    parameter int DEPTH = 32,
+    localparam int DW = DATA_WIDTH
+)(
     input i_clk,
     input i_rst,
 
@@ -21,16 +24,13 @@ module fifo #(
     reg [$clog2(DEPTH)-1:0] write_ptr = 0;
     reg [$clog2(DEPTH)-1:0] read_ptr = 0;
 
-    always_ff @(posedge i_clk) begin
-        
-    end
+    //always_ff @(posedge i_clk)
 
 `ifdef FORMAL
     initial assume(i_write_en == 0);
     initial assume(i_read_en == 0);
 
-    always @(posedge clk) begin
-    end
+    always @(posedge clk)
 `endif
 
-endmodule : fifo
+endmodule: fifo
