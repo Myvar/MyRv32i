@@ -27,10 +27,19 @@ module fifo #(
     //always_ff @(posedge i_clk)
 
 `ifdef FORMAL
+    // assume inputs
     initial assume(i_write_en == 0);
     initial assume(i_read_en == 0);
 
-    always @(posedge clk)
+    //assert internal state
+    always @(posedge clk) begin
+        
+    end
+
+    //assert output
+    always @(posedge clk) begin
+        
+    end
 `endif
 
 endmodule: fifo

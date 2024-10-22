@@ -12,6 +12,7 @@ jobs:
  lint: 
   runs-on: ubuntu-latest 
   steps: 
+    - uses: kazutoiris/yosys-action@v1
     - name: Checkout code 
       uses: actions/checkout@v2 
       with: 
@@ -25,3 +26,5 @@ jobs:
           rtl/components/*.sv
       env:
         SVLINT_CONFIG: .svlint.toml
+    - name: Formal verification
+      run: "sby -f ./rtl/**/*.sby"
