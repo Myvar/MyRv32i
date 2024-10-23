@@ -1,3 +1,5 @@
+`timescale 1ns / 1ps
+`default_nettype none
 /*
 
 Copyright (c) 2014-2017 Alex Forencich

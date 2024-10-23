@@ -26,46 +26,46 @@ int main(int argc, char **argv) {
   uart = new UARTSIM(8880);
   uart->setup(0x005161);
 
-  top->clk = 0;
+  top->i_clk = 0;
   step();
 
  
-  top->clk = !top->clk;
+  top->i_clk = !top->i_clk;
   step();
 
-  top->clk = !top->clk;
+  top->i_clk = !top->i_clk;
   step();
 
-  top->rst = 1;
-  top->clk = !top->clk;
+  top->i_rst = 1;
+  top->i_clk = !top->i_clk;
   step();
 
-  top->clk = !top->clk;
+  top->i_clk = !top->i_clk;
   step();
-  top->clk = !top->clk;
+  top->i_clk = !top->i_clk;
   step();
-  top->clk = !top->clk;
-  step();
-
-  top->rst = 0;
-  top->clk = 0;
-
-  top->clk = !top->clk;
+  top->i_clk = !top->i_clk;
   step();
 
-  top->clk = !top->clk;
+  top->i_rst = 0;
+  top->i_clk = 0;
+
+  top->i_clk = !top->i_clk;
   step();
-  top->clk_en = 1;
-  top->clk = !top->clk;
+
+  top->i_clk = !top->i_clk;
+  step();
+  top->i_clk_en = 1;
+  top->i_clk = !top->i_clk;
   step();
 
   tfp->open("run.fst");
 
   /*while (!top->booted) {
-    top->clk = 1;
+    top->i_clk = 1;
     top->eval();
 
-    top->clk = 0;
+    top->i_clk = 0;
     top->eval();
 
     top->rx = (*uart)(top->tx);
@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
     // tfp->dump(contextp->time());
   }*/
   // while (!top->booted) {
-  //   top->clk = !top->clk;
+  //   top->i_clk = !top->i_clk;
   //   top->rx = (*uart)(top->tx);
 
   //   top->eval();
@@ -87,17 +87,17 @@ int main(int argc, char **argv) {
   //while (!contextp->gotFinish()) {
   while (true) {
    //for (int i = 0; i < 10000; i++) {
-    top->clk = 1;
+    top->i_clk = 1;
     top->eval();
-    if(top->booted) tfp->dump(contextp->time());
-    if(top->booted) contextp->timeInc(1);
+    if(top->o_booted) tfp->dump(contextp->time());
+    if(top->o_booted) contextp->timeInc(1);
 
-    top->clk = 0;
+    top->i_clk = 0;
     top->eval();
-    if(top->booted) tfp->dump(contextp->time());
-    if(top->booted) contextp->timeInc(1);
+    if(top->o_booted) tfp->dump(contextp->time());
+    if(top->o_booted) contextp->timeInc(1);
 
-    top->rx = (*uart)(top->tx);
+    top->i_rx = (*uart)(top->o_tx);
   }
 
   tfp->close();

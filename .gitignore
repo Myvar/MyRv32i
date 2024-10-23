@@ -22,3 +22,4 @@ build
 .cache
 .$MyRv32I.drawio.dtmp
 tmp
+fifo

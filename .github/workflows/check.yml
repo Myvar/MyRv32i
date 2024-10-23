@@ -1,0 +1,35 @@
+name: Quality pipe 
+ 
+on: 
+ pull_request: 
+  types: [opened, synchronize] 
+  branches: 
+  - main
+  - formal
+  - proto
+
+jobs: 
+ lint: 
+  runs-on: ubuntu-latest 
+  steps: 
+    - uses: kazutoiris/yosys-action@v1
+    - name: Checkout code 
+      uses: actions/checkout@v2 
+      with: 
+        ref: ${{ github.event.pull_request.head.sha }} 
+
+    - name: Lint     
+      uses: dalance/svlint-action@master
+      with:
+        files: |
+          rtl/**/*.sv
+      env:
+        SVLINT_CONFIG: .svlint.toml
+    - uses: actions/setup-python@v5
+    - uses: actions/setup-python@v5 
+      with:
+        python-version: '3.12'
+        cache: 'pip' # caching pip dependencies
+    - run: pip install cocotb cocotb-test
+    - name: Test benches
+      run: "cd tb && chmod +x ./tests.sh && ./tests.sh"
