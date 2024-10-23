@@ -19,9 +19,6 @@ module rv32i (
     .i_rst(i_rst)
   );
 
-
-
-
 `ifdef TESTING
   always @(posedge clk) begin
     //$display("CPU");

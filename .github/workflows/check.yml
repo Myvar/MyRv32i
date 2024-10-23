@@ -22,9 +22,12 @@ jobs:
       uses: dalance/svlint-action@master
       with:
         files: |
-          rtl/**/*.sv
+          rtl/*.sv
+          rtl/components/*.sv
+          rtl/core/*.sv
       env:
         SVLINT_CONFIG: .svlint.toml
+        INCLUDE: ./rtl
     - uses: actions/setup-python@v5
     - uses: actions/setup-python@v5 
       with:
