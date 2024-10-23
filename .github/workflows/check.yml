@@ -30,6 +30,5 @@ jobs:
       with:
         python-version: '3.12'
         cache: 'pip' # caching pip dependencies
-    - run: pip install cocotb cocotb-test
     - name: Test benches
       run: "cd tbchmod +x ./tests.sh && ./tests.sh"
