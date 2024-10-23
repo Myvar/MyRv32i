@@ -32,7 +32,7 @@ module fifo #(
         if (i_rst)
             write_ptr <= 0;
         else
-            if(i_write_en && !(o_full))
+            if(i_write_en && !o_full)
                 write_ptr <= write_ptr + 1;
             else
                 write_ptr <= write_ptr;
@@ -51,7 +51,7 @@ module fifo #(
             if (i_rst)
                 read_ptr <= 0;
             else
-                if(i_read_en && !o_empty && !o_full)
+                if(i_read_en && !o_empty)
                     read_ptr <= read_ptr + 1;
                 else
                     read_ptr <= read_ptr;
@@ -119,7 +119,7 @@ module fifo #(
     always @(posedge i_clk)
         if (f_past_valid)
             if(!$past(i_rst))
-                if($past(i_write_en) && !o_full)
+                if($past(i_write_en) && !$past(o_full) && !o_full)
                     assert($past(i_data) == mem[write_ptr-1]);
 
 

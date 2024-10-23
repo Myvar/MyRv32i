@@ -7,7 +7,7 @@ on:
   - main
   - formal
   - proto
- 
+
 jobs: 
  lint: 
   runs-on: ubuntu-latest 
@@ -25,5 +25,10 @@ jobs:
           rtl/**/*.sv
       env:
         SVLINT_CONFIG: .svlint.toml
-    - name: Formal verification
-      run: "chmod +x ./automation/fv.sh && ./automation/fv.sh"
+    - uses: actions/setup-python@v5
+    - with:
+      python-version: '3.12'
+      cache: 'pip' # caching pip dependencies
+    - run: pip install cocotb cocotb-test
+    - name: Test benches
+      run: "cd tbchmod +x ./tests.sh && ./tests.sh"
