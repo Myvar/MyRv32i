@@ -1,6 +1,6 @@
 #!/bin/zsh
 ./build_frimware.sh
-python automation/rom.py ./firmware/obj_dir/main.bin > rtl/rom.svh
+python automation/rom.py ./firmware/obj_dir/main.bin > rtl/core/rom/rom.svh
 rm ./run/obj_dir/Vrv32i
 cd run
 svFiles=(
@@ -11,7 +11,7 @@ svFiles=(
 )
 vFiles=(../rtl/**/*.v)
 allFiles=("${svFiles[@]}" "${vFiles[@]}")
-verilator -I../rtl/ --cc --exe --build --timing --trace-fst --top-module rv32i -j 0 -Wno-lint -Wno-selrange -CFLAGS -fpermissive *.cpp ${allFiles[@]}
+verilator -I../rtl/ -relative-includes --cc --exe --build --timing --trace-fst --top-module rv32i -j 0 -Wno-lint -Wno-selrange -CFLAGS -fpermissive *.cpp ${allFiles[@]}
 built=$?
 cd ..
 wait
