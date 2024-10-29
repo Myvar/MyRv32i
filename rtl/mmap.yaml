@@ -1,0 +1,19 @@
+memmory_map:
+  - enum: PORT_ROM
+    parms: []
+    module: local_rom
+    local: true
+    read: true,
+    write: true,
+    start: 0
+    end: 512
+  - enum: PORT_LRAM
+    parms:
+      # 4096 is devided by 4 to get it in words
+      ADDR_COUNT: 1024 
+    module: local_ram
+    local: true
+    read: true,
+    write: true,
+    start: 513
+    end: 4096

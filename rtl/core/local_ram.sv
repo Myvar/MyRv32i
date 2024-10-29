@@ -4,7 +4,7 @@
 module local_ram #(
     ADDR_WIDTH = 32,
     DATA_WIDTH = 32,
-    ADDR_COUNT = 4096
+    ADDR_COUNT = 1024 /* is devided by 4 for long encoding */
 )(
     input i_clk,
     input i_clk_en,

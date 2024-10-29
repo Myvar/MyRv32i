@@ -6,6 +6,7 @@ cd run
 svFiles=(
     ../rtl/core/*.sv
     ../rtl/core/rom/*.sv
+    ../rtl/core/generated/*.sv
     ../rtl/components/*.sv
     ../rtl/*.sv
 )
