@@ -1,3 +1,7 @@
+/*
+ * This module has a 2 segmented pipeline
+ */
+
 `timescale 1ns / 1ps
 `default_nettype none
 
@@ -16,11 +20,13 @@ module core_mem_arbiter #(
     input i_fetch_read,
     input [AW-1:0] i_fetch_addr,
     output [DW-1:0] o_fetch_data,
+    output o_fetch_ack,
 
     // LSU read
     input i_lsu_read,
     input [AW-1:0] i_r_lsu_addr,
     output [DW-1:0] o_r_lsu_data,
+    output o_lsu_ack,
 
     // LSU write
     input i_lsu_write,
@@ -32,12 +38,13 @@ module core_mem_arbiter #(
     input i_deubg_read,
     input [AW-1:0] i_r_debug_addr,
     output [DW-1:0] o_r_debug_data,
+    output o_debug_ack,
 
     // debug write
     input i_debug_write,
     input [AW-1:0] i_w_debug_addr,
     input [3:0] i_w_debug_byte_en,
-    input [DW-1:0] i_w_debug_data
+    input [DW-1:0] i_w_debug_data,
 );
 
 //local ram
@@ -54,6 +61,9 @@ wire [AW-1:0] rom_read_addr;
 wire [DW-1:0] rom_read_data;
 
 assign o_stall = i_fetch_read || i_lsu_read || i_deubg_read;
+reg stall = 0;
+
+assign o_stall = stall;
 
 // first lsu
 // then fetch
@@ -172,5 +182,39 @@ always_ff @(posedge i_clk)
 
 
 // 2) (de)mux port to target
+always_ff @(posedge i_clk)
+    case (src_port)
+        PORT_LSU:
+            case (target_port)
+                T_PORT_ROM: begin 
+                    rom_read_addr <= i_r_lsu_addr;
+                    o_r_lsu_data <= rom_read_data;
+                    o_r_lsu_ack <= 1;
+                end
+                T_PORT_LRAM: begin 
+                    local_read_addr <= i_r_lsu_addr;
+                    o_r_lsu_data <= local_read_data;
+
+
+                    
+
+
+
+                    o_r_lsu_ack <= 1;
+                end
+                default: begin
+                    o_lsu_ack <= 0;
+                    o_debug_ack <= 0;
+                    o_fetch_ack <= 0;
+                end
+            endcase
+        PORT_FETCH:
+        PORT_DEBUG:
+        default: begin
+            o_lsu_ack <= 0;
+            o_debug_ack <= 0;
+            o_fetch_ack <= 0;
+        end 
+    endcase
 
 endmodule
