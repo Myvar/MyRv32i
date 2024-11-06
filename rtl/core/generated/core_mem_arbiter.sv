@@ -139,14 +139,14 @@ module core_mem_arbiter #(
     end else if (i_clk_en) begin
       if (src_addr < ROM_SIZE) begin
         target_port <= T_PORT_ROM;
-        //$display("Target Port", src_addr);
         target_addr <= src_addr;
       end else if (src_addr < ROM_SIZE + RAM_SIZE) begin
         target_port <= T_PORT_LRAM;
-        target_addr <= src_addr - (ROM_SIZE + ROM_SIZE);
+        target_addr <= $unsigned(src_addr - (ROM_SIZE));
       end else begin
         target_port <= T_PORT_LRAM;
-        target_addr <= {AW{1'b0}};
+        target_addr <= $unsigned(src_addr - (ROM_SIZE + RAM_SIZE));
+        //target_addr <= {AW{1'b0}};
       end
     end
   end

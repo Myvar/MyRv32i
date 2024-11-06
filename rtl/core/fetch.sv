@@ -47,9 +47,12 @@ module fetch #(
         o_fetch_read <= 1'b0;
       end
 
+  reg ack;
+
+  always_ff @(posedge i_clk) ack <= i_fetch_ack;
   always_ff @(posedge i_clk)
     if (i_clk_en)
-      if (i_fetch_ack) begin
+      if (!i_fetch_ack && ack) begin
         o_inst   <= i_fetch_data;
         o_pc_inc <= 1'b1;
       end else begin

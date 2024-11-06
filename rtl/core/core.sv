@@ -14,7 +14,6 @@ module core #(
   // general stall lones
   wire stall_line;
 
-
   wire fetch_read;
   wire [AW-1:0] fetch_addr;
   reg [DW-1:0] fetch_data;
@@ -70,7 +69,7 @@ module core #(
   always_ff @(posedge i_clk)
     if (i_clk_en)
       if (pc_inc) begin
-        pc <= pc + 1;
+        pc <= pc + 4;
       end
 
 

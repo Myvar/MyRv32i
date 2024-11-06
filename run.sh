@@ -12,7 +12,7 @@ svFiles=(
 )
 vFiles=(../rtl/**/*.v)
 allFiles=("${svFiles[@]}" "${vFiles[@]}")
-verilator -I../rtl/ -relative-includes --cc --exe --build --timing --trace-fst --top-module rv32i -j 0 -Wno-lint -Wno-selrange -CFLAGS -fpermissive *.cpp ${allFiles[@]}
+verilator -I../rtl/ -relative-includes --cc --exe --build --timing --trace-fst --top-module rv32i -j 0 -Wno-lint -Wno-selrange -CFLAGS -fpermissive *.cpp ${allFiles[@]} -DTESTING=1
 built=$?
 cd ..
 wait
