@@ -28,7 +28,6 @@ module local_ram #(
 (* ram_style = "block" *) logic [7:0] mem_c [ADDR_COUNT-1:0];
 (* ram_style = "block" *) logic [7:0] mem_d [ADDR_COUNT-1:0];
 
-assign o_write_uart = i_write_data[7:0];
 
 always_ff @(posedge i_clk)
     if (i_clk_en)
@@ -60,8 +59,5 @@ always_ff @(posedge i_clk)
 
 always_ff @(posedge i_clk)
     o_read_data <= {mem_d[i_read_addr], mem_c[i_read_addr], mem_b[i_read_addr], mem_a[i_read_addr]};
-
-always_ff @(posedge i_clk)
-    o_read_fetch_data <= {mem_d[i_read_fetch_addr], mem_c[i_read_fetch_addr], mem_b[i_read_fetch_addr], mem_a[i_read_fetch_addr]};
 
 endmodule

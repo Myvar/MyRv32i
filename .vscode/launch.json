@@ -2,26 +2,43 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Python Debugger: Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "./arbiter.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/tb"
+    },
+    {
       "name": "talk",
       "type": "debugpy",
       "request": "launch",
       "program": "talk.py",
       "args": [
-        "--host", "localhost", 
-        "--port", "8880", 
-        "--retry-interval", "5", 
-        
-        "--minor-pause", "0.0", 
-        "--major-pause", "0.0", 
-        
-        "--write", 
-        "--check", "Off", 
-        "--file", "firmware/obj_dir/main.bin", 
-        "--start-address", "0x00000000", 
-        
-        "--boot", 
-        
-        "--log-level", "Fatal,Error,Status"
+        "--host",
+        "localhost",
+        "--port",
+        "8880",
+        "--retry-interval",
+        "5",
+
+        "--minor-pause",
+        "0.0",
+        "--major-pause",
+        "0.0",
+
+        "--write",
+        "--check",
+        "Off",
+        "--file",
+        "firmware/obj_dir/main.bin",
+        "--start-address",
+        "0x00000000",
+
+        "--boot",
+
+        "--log-level",
+        "Fatal,Error,Status"
       ]
     }
   ]
