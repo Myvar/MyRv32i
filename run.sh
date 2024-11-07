@@ -1,6 +1,6 @@
 #!/bin/zsh
 ./build_frimware.sh
-python automation/rom.py ./firmware/obj_dir/main.bin > rtl/core/rom/rom.svh
+python automation/rom.py ./firmware/obj_dir/test.bin > rtl/core/rom/rom.svh
 rm ./run/obj_dir/Vrv32i
 cd run
 svFiles=(

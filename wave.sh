@@ -1,1 +1,2 @@
-gtkwave --rcvar 'fontname_signals Monospace 16' --rcvar 'fontname_waves Monospace 16'
+gtkwave run.fst --rcvar 'fontname_signals Monospace 20' --rcvar 'fontname_waves Monospace 20'
+
