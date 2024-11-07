@@ -29,7 +29,8 @@ module fetch #(
     input reg i_fetch_ack,
 
     // risc-v instructions are allways 32 bit unless compressed
-    output reg [31:0] o_inst
+    output reg [31:0] o_inst,
+    output reg o_wait_next
 );
 
   //stage 1
@@ -51,13 +52,17 @@ module fetch #(
 
   always_ff @(posedge i_clk) ack <= i_fetch_ack;
   always_ff @(posedge i_clk)
-    if (i_clk_en)
+    if (i_clk_en) begin
+      o_wait_next <= 1'b1;
       if (!i_fetch_ack && ack) begin
-        o_inst   <= i_fetch_data;
+        o_wait_next <= 1'b1;
+        o_inst <= i_fetch_data;
         o_pc_inc <= 1'b1;
       end else begin
+        o_wait_next <= 1'b0;
         o_pc_inc <= 1'b0;
       end
+    end
 
 
 

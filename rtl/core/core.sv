@@ -1,6 +1,9 @@
 `timescale 1ns / 1ps
 //
 `default_nettype none
+//
+`include "opcode.svh"
+
 
 module core #(
     parameter int AW = 32,
@@ -72,6 +75,8 @@ module core #(
         pc <= pc + 4;
       end
 
+  wire decode_wait;
+  wire execute_wait;
 
   fetch #(
       .AW(AW),
@@ -93,7 +98,55 @@ module core #(
       .i_fetch_ack (fetch_ack),
 
       // risc-v instructions are allways 32 bit unless compressed
-      .o_inst(inst)
+      .o_inst(inst),
+      .o_wait_next(decode_wait)
+  );
+
+  Opcode opcode;
+  reg [4:0] rs1;
+  reg [4:0] rs2;
+  reg [4:0] rd;
+  reg [31:0] imm;
+
+  decode #(
+      .AW(AW),
+      .DW(DW)
+  ) u_decode (
+      .i_clk(i_clk),
+      .i_clk_en(i_clk_en),
+      .i_rst(i_rst),
+
+      //line from stall unit
+      .i_stall(stall_line),
+      .i_wait (decode_wait),
+
+      .i_inst(inst),
+
+      .o_opcode(opcode),
+      .o_rs1(rs1),
+      .o_rs2(rs2),
+      .o_rd(rd),
+      .o_imm(imm),
+      .o_wait_next(execute_wait)
+  );
+
+  execute #(
+      .AW(AW),
+      .DW(DW)
+  ) u_execute (
+      .i_clk(i_clk),
+      .i_clk_en(i_clk_en),
+      .i_rst(i_rst),
+
+      //line from stall unit
+      .i_stall(stall_line),
+      .i_wait (execute_wait),
+
+      .i_opcode(opcode),
+      .i_rs1(rs1),
+      .i_rs2(rs2),
+      .i_rd(rd),
+      .i_imm(imm)
   );
 
 endmodule

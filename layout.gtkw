@@ -1,0 +1,52 @@
+[*]
+[*] GTKWave Analyzer v3.3.120 (w)1999-2024 BSI
+[*] Thu Nov  7 04:50:32 2024
+[*]
+[dumpfile] "/home/emile/code/MyRv32i/run.fst"
+[dumpfile_mtime] "Thu Nov  7 04:49:41 2024"
+[dumpfile_size] 43745
+[savefile] "/home/emile/code/MyRv32i/layout.gtkw"
+[timestart] 0
+[size] 1910 1006
+[pos] -1 -1
+*-5.000000 26 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TOP.
+[treeopen] TOP.rv32i.
+[treeopen] TOP.rv32i.u_core.
+[sst_width] 273
+[signals_width] 166
+[sst_expanded] 1
+[sst_vpaned_height] 298
+@100000028
+TOP.i_clk
+@28
+TOP.i_clk_en
+TOP.i_rst
+@100000028
+TOP.rv32i.u_core.u_core_mem_arbiter.src_port[1:0]
+@28
+TOP.rv32i.u_core.u_core_mem_arbiter.src_read
+@22
+TOP.rv32i.u_core.u_core_mem_arbiter.target_addr[31:0]
+@100000028
+TOP.rv32i.u_core.u_core_mem_arbiter.target_port[1:0]
+@22
+TOP.rv32i.u_core.pc[31:0]
+@28
+TOP.rv32i.u_core.pc_inc
+@22
+TOP.rv32i.u_core.inst[31:0]
+@100000028
+TOP.rv32i.u_core.opcode[8:0]
+@22
+TOP.rv32i.u_core.rd[4:0]
+TOP.rv32i.u_core.rs1[4:0]
+TOP.rv32i.u_core.rs2[4:0]
+TOP.rv32i.u_core.imm[31:0]
+@100000028
+TOP.rv32i.u_core.u_decode.opcode[6:0]
+@28
+TOP.rv32i.u_core.stall_line
+TOP.rv32i.u_core.u_decode.o_wait_next
+[pattern_trace] 1
+[pattern_trace] 0

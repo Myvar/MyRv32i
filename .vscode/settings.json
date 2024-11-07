@@ -1,7 +1,9 @@
 {
     "files.associations": {
         "*.tcc": "c",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "ctime": "cpp",
+        "cassert": "cpp"
     },
     "cmake.ignoreCMakeListsMissing": true
 }
