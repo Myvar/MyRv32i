@@ -14,6 +14,8 @@ module execute #(
     input wire i_clk_en,
     input wire i_rst,
 
+    input wire i_pc_inc,
+
     //line from stall unit
     input wire i_stall,
     input wire i_wait,
@@ -55,6 +57,8 @@ module execute #(
       .i_clk(i_clk),
       .i_clk_en(i_clk_en),
       .i_rst(i_rst),
+
+      .i_pc_inc(i_pc_inc),
 
       //line from stall unit
       .i_stall(stall),

@@ -153,21 +153,21 @@ module core #(
   );
 
 
- regs u_regs (
-   .i_clk(i_clk),
-   .i_clk_en(i_clk_en),
-   .i_rst(i_rst),
+  regs u_regs (
+      .i_clk(i_clk),
+      .i_clk_en(i_clk_en),
+      .i_rst(i_rst),
 
-   .i_rd_addr(rs1),
-   .i_rd_data(data_rd),
-   .i_rd_write(rd_write),
-    
-   .i_rs1_addr(rs2),
-   .o_rs1_data(data_rs1),
-    
-   .i_rs2_addr(rd),
-   .o_rs2_data(data_rs2)
-);
+      .i_rd_addr (rd),
+      .i_rd_data (data_rd),
+      .i_rd_write(rd_write),
+
+      .i_rs1_addr(rs2),
+      .o_rs1_data(data_rs1),
+
+      .i_rs2_addr(rd),
+      .o_rs2_data(data_rs2)
+  );
 
 
   execute #(
@@ -177,6 +177,9 @@ module core #(
       .i_clk(i_clk),
       .i_clk_en(i_clk_en),
       .i_rst(i_rst),
+
+
+      .i_pc_inc(pc_inc),
 
       //line from stall unit
       .i_stall(stall_line),
