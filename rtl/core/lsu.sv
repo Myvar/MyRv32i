@@ -42,8 +42,8 @@ module lsu #(
     input reg i_lsu_ack,
 
     // LSU Write Port
-    output wire o_lsu_write,
-    output wire [AW-1:0] o_w_lsu_addr,
+    output reg o_lsu_write,
+    output reg [AW-1:0] o_w_lsu_addr,
     output wire [3:0] o_w_lsu_byte_en,
     output wire [DW-1:0] o_w_lsu_data
 );
@@ -55,8 +55,10 @@ module lsu #(
     if (i_rst) begin
       //todo reset state
       done <= 1'b0;
-
+      o_rd_write <= 1'b0;
+      o_lsu_read <= 1'b0;
     end else if (i_clk_en && !done) begin
+      o_lsu_read <= 1'b0;
       case (i_opcode)
         //rd = M[rs1+imm][0:7]
         OP_LB: begin
@@ -75,10 +77,9 @@ module lsu #(
         OP_LW:  ;
         OP_LBU: ;
         OP_LHU: ;
-        OP_SB:  ;
-        OP_SH:  ;
-        OP_SW:  ;
       endcase
+      end else begin 
+
     end
 
     if (i_pc_inc) done <= 1'b0;
@@ -86,9 +87,30 @@ module lsu #(
 
   //stage 2 write
   always_ff @(posedge i_clk) begin
-    if (i_clk_en) begin
+    if (i_rst) begin
+      //todo reset state
+      done <= 1'b0;
 
+    end else if (i_clk_en && !done) begin
+      case (i_opcode)
+        //M[rs1+imm][0:7] = rs2[0:7]
+        OP_SB: begin
+          if (i_lsu_ack) begin
+            done <= 1'b1;
+            o_lsu_write <= 1'b0;
+          end else begin
+            o_w_lsu_addr <= i_rs1 + i_imm;
+            o_w_lsu_data <= {24'd0, i_rs2[7:0]};
+            o_w_lsu_byte_en <= 3'b001;
+            o_lsu_write <= 1'b1;
+          end
+        end
+        OP_SH: ;
+        OP_SW: ;
+      endcase
     end
+
+    if (i_pc_inc) done <= 1'b0;
   end
 
 endmodule

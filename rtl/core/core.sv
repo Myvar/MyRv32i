@@ -162,10 +162,10 @@ module core #(
       .i_rd_data (data_rd),
       .i_rd_write(rd_write),
 
-      .i_rs1_addr(rs2),
+      .i_rs1_addr(rs1),
       .o_rs1_data(data_rs1),
 
-      .i_rs2_addr(rd),
+      .i_rs2_addr(rs2),
       .o_rs2_data(data_rs2)
   );
 

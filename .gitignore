@@ -23,3 +23,4 @@ build
 .$MyRv32I.drawio.dtmp
 tmp
 fifo
+tmp/rv32i.json

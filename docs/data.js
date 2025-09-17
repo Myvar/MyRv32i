@@ -1,1 +1,1 @@
-function getModules() { return ["bios","ram","rv32i",];}
+function getModules() { return ["core","core_mem_arbiter","decode","execute","fetch","fifo","local_ram","local_rom","lsu","regs","rv32i",];}
