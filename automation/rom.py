@@ -41,9 +41,9 @@ def main(argv):
                 | (byte0 if byte0 is not None else 0)
             )
 
-        print(f"32'd{addr}: o_read_data = 32'd{word};")
+        print(f"32'd{addr}: `output = 32'd{word};")
 
-    print("default: o_read_data = 32'bX; // Default value")
+    print("default: `output = 32'd0; // Default value")
 
 
 if __name__ == "__main__":

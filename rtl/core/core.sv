@@ -4,14 +4,14 @@
 //
 `include "opcode.svh"
 
+`include "if/if.svh"
 
 module core #(
     parameter int AW = 32,
     parameter int DW = 32
 ) (
-    input i_clk,
-    input i_clk_en,
-    input i_rst
+    domain_if domain,
+    output o_booted
 );
 
   // general stall lines
@@ -24,106 +24,117 @@ module core #(
   wire rd_write;
   wire [DW-1:0] data_rd;
 
-  // arbiter
-  wire fetch_read;
-  wire [AW-1:0] fetch_addr;
-  reg [DW-1:0] fetch_data;
-  reg fetch_ack;
-
-
-  // LSU Read Port
-  wire lsu_read;
-  wire [AW-1:0] r_lsu_addr;
-  wire [DW-1:0] r_lsu_data;
-  wire lsu_ack;
-
-  // LSU Write Port
-  wire lsu_write;
-  wire [AW-1:0] w_lsu_addr;
-  wire [3:0] w_lsu_byte_en;
-  wire [DW-1:0] w_lsu_data;
-
-
-  core_mem_arbiter #(
-      .AW(AW),
-      .DW(DW)
-  ) u_core_mem_arbiter (
-      .i_clk(i_clk),
-      .i_clk_en(i_clk_en),
-      .i_rst(i_rst),
-
-      .o_stall(stall_line),
-
-      // Fetch Read Port
-      .i_fetch_read(fetch_read),
-      .i_fetch_addr(fetch_addr),
-      .o_fetch_data(fetch_data),
-      .o_fetch_ack (fetch_ack),
-
-
-      // LSU Read Port
-      .i_lsu_read(lsu_read),
-      .i_r_lsu_addr(r_lsu_addr),
-      .o_r_lsu_data(r_lsu_data),
-      .o_lsu_ack(lsu_ack),
-
-      // LSU Write Port
-      .i_lsu_write(lsu_write),
-      .i_w_lsu_addr(w_lsu_addr),
-      .i_w_lsu_byte_en(w_lsu_byte_en),
-      .i_w_lsu_data(w_lsu_data)
-      /*
-      // Debug Read Port
-      .i_debug_read(),
-      .i_r_debug_addr(),
-      .o_r_debug_data,
-      .o_debug_ack(),
-
-      // Debug Write Port
-      .i_debug_write(),
-      .i_w_debug_addr(),
-      .i_w_debug_byte_en(),
-      .i_w_debug_dat()*/
-  );
-
   //tmp
   reg [AW-1:0] pc;
   wire pc_inc;
 
   reg [31:0] inst;
-  always_ff @(posedge i_clk)
-    if (i_clk_en)
+  always_ff @(posedge domain.i_clk)
+    if (domain.i_rst) pc <= -4;
+    else if (domain.i_clk_en)
       if (pc_inc) begin
         pc <= pc + 4;
       end
 
-  wire decode_wait;
-  wire execute_wait;
+
+  assign o_booted = pc_inc || inst > 0;
+
+  bus_if #(
+      .AW(AW),
+      .DW(DW)
+  ) fetch_bus ();
+
+
+  bus_if #(
+      .AW(AW),
+      .DW(DW)
+  ) lsu_bus ();
+
+  bus_if #(
+      .AW(AW),
+      .DW(DW)
+  ) rom_bus ();
+
+  bus_if #(
+      .AW(AW),
+      .DW(DW)
+  ) ram_bus ();
+
+
+  bus_if #(
+      .AW(AW),
+      .DW(DW)
+  ) foo_bus ();
+
+
+  bus_if #(
+      .AW(AW),
+      .DW(DW)
+  ) bar_bus ();
+
+  bus_if #(
+      .AW(AW),
+      .DW(DW)
+  ) arbiter_bus ();
+
+  arbiter_2_to_1 arbiter (
+      .m0_bus(fetch_bus.slave),
+      .m1_bus(lsu_bus.slave),
+      .s0_bus(arbiter_bus.master)
+  );
+
+  interconnect_1_to_4 inter (
+      .m0_bus(arbiter_bus.slave),
+      .s0_bus(rom_bus.master),
+      .s1_bus(ram_bus.master),
+      .s2_bus(foo_bus.master),
+      .s3_bus(bar_bus.master)
+  );
+
+  assign arbiter_bus.clk = domain.i_clk;
+  assign arbiter_bus.reset = domain.i_rst;
+
+  assign rom_bus.clk = domain.i_clk;
+  assign rom_bus.reset = domain.i_rst;
+
+  assign ram_bus.clk = domain.i_clk;
+  assign ram_bus.reset = domain.i_rst;
+
+  assign fetch_bus.clk = domain.i_clk;
+  assign fetch_bus.reset = domain.i_rst;
+
+  assign lsu_bus.clk = domain.i_clk;
+  assign lsu_bus.reset = domain.i_rst;
+
+  assign foo_bus.clk = domain.i_clk;
+  assign foo_bus.reset = domain.i_rst;
+
+  assign bar_bus.clk = domain.i_clk;
+  assign bar_bus.reset = domain.i_rst;
+
+  local_rom #(
+      .AW(AW),
+      .DW(DW)
+  ) rom (
+      .bus(rom_bus.slave)
+  );
+
+
+  local_ram ram (.bus(ram_bus.slave));
 
   fetch #(
       .AW(AW),
       .DW(DW)
   ) u_fetch (
-      .i_clk(i_clk),
-      .i_clk_en(i_clk_en),
-      .i_rst(i_rst),
+      .bus(fetch_bus.master),
 
-      //line from stall unit
       .i_stall(stall_line),
 
       .i_pc(pc),
       .o_pc_inc(pc_inc),
 
-      .o_fetch_read(fetch_read),
-      .o_fetch_addr(fetch_addr),
-      .i_fetch_data(fetch_data),
-      .i_fetch_ack (fetch_ack),
-
-      // risc-v instructions are allways 32 bit unless compressed
-      .o_inst(inst),
-      .o_wait_next(decode_wait)
+      .o_inst(inst)
   );
-
   Opcode opcode;
   reg [4:0] rs1;
   reg [4:0] rs2;
@@ -134,13 +145,11 @@ module core #(
       .AW(AW),
       .DW(DW)
   ) u_decode (
-      .i_clk(i_clk),
-      .i_clk_en(i_clk_en),
-      .i_rst(i_rst),
+      .i_clk(domain.i_clk),
+      .i_clk_en(domain.i_clk_en),
+      .i_rst(domain.i_rst),
 
-      //line from stall unit
       .i_stall(stall_line),
-      .i_wait (decode_wait),
 
       .i_inst(inst),
 
@@ -148,15 +157,15 @@ module core #(
       .o_rs1(rs1),
       .o_rs2(rs2),
       .o_rd(rd),
-      .o_imm(imm),
-      .o_wait_next(execute_wait)
+      .o_imm(imm)
   );
 
 
+
   regs u_regs (
-      .i_clk(i_clk),
-      .i_clk_en(i_clk_en),
-      .i_rst(i_rst),
+      .i_clk(domain.i_clk),
+      .i_clk_en(domain.i_clk_en),
+      .i_rst(domain.i_rst),
 
       .i_rd_addr (rd),
       .i_rd_data (data_rd),
@@ -169,21 +178,15 @@ module core #(
       .o_rs2_data(data_rs2)
   );
 
-
   execute #(
       .AW(AW),
       .DW(DW)
   ) u_execute (
-      .i_clk(i_clk),
-      .i_clk_en(i_clk_en),
-      .i_rst(i_rst),
-
+      .domain,
 
       .i_pc_inc(pc_inc),
 
-      //line from stall unit
       .i_stall(stall_line),
-      .i_wait (execute_wait),
 
       .i_opcode(opcode),
       .i_imm(imm),
@@ -194,17 +197,9 @@ module core #(
       .o_rd_write(rd_write),
       .o_rd(data_rd),
 
-      // LSU Read Port
-      .o_lsu_read(lsu_read),
-      .o_r_lsu_addr(r_lsu_addr),
-      .i_r_lsu_data(r_lsu_data),
-      .i_lsu_ack(lsu_ack),
+      .o_busy(stall_line),
 
-      // LSU Write Port
-      .o_lsu_write(lsu_write),
-      .o_w_lsu_addr(w_lsu_addr),
-      .o_w_lsu_byte_en(w_lsu_byte_en),
-      .o_w_lsu_data(w_lsu_data)
+      .bus(lsu_bus.master)
   );
 
 endmodule

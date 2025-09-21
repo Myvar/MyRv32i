@@ -1,73 +1,94 @@
-/*
-* This module will stall if need be,
-* otherwise load a rv opcode form the rom
-*
-*/
-
 `timescale 1ns / 1ps
 //
 `default_nettype none
+//
+`include "if/if.svh"
 
 module fetch #(
     parameter int AW = 32,
     parameter int DW = 32
 ) (
+    bus_if.master bus,
 
-    input wire i_clk,
-    input wire i_clk_en,
-    input wire i_rst,
-
-    //line from stall unit
     input wire i_stall,
 
-    input reg [AW-1:0] i_pc,
-    output reg o_pc_inc,
+    input wire [AW-1:0] i_pc,
 
-    output wire o_fetch_read,
-    output wire [AW-1:0] o_fetch_addr,
-    input reg [DW-1:0] i_fetch_data,
-    input reg i_fetch_ack,
+    output logic o_pc_inc,
 
-    // risc-v instructions are allways 32 bit unless compressed
-    output reg [31:0] o_inst,
-    output reg o_wait_next
+    output reg [31:0] o_inst
 );
 
-  //stage 1
-  // 1) check for stall condition
-  // 2) ask for data
-  // stage 2
-  // 1) read data from bus
+  typedef enum logic [1:0] {
+    S_IDLE,  // Ready to start a new fetch.
+    S_WAIT,  // Actively fetching, waiting for the bus slave to respond.
+    S_DONE   // Instruction has been received and is waiting for the pipeline to accept it.
+  } state_t;
 
-  always_ff @(posedge i_clk)
-    if (i_clk_en)
-      if (!i_stall && !i_fetch_ack) begin
-        o_fetch_addr <= i_pc;
-        o_fetch_read <= 1'b1;
-      end else begin
-        o_fetch_read <= 1'b0;
+  state_t state_reg, state_next;
+  wire stall = bus.waitrequest && i_stall;
+
+  always_comb begin
+    state_next     = state_reg;
+    o_pc_inc       = 1'b0;
+    bus.read       = 1'b0;
+    bus.chipselect = 1'b0;
+
+    if (bus.reset) state_next = S_IDLE;
+
+    unique case (state_reg)
+      S_IDLE: begin
+        if (!stall) begin
+          state_next     = S_WAIT;
+          bus.read       = 1'b1;
+          bus.chipselect = 1'b1;
+        end
       end
-
-  reg ack;
-
-  always_ff @(posedge i_clk) ack <= i_fetch_ack;
-  always_ff @(posedge i_clk)
-    if (i_clk_en) begin
-      o_wait_next <= 1'b1;
-      if (!i_fetch_ack && ack) begin
-        o_wait_next <= 1'b1;
-        o_inst <= i_fetch_data;
-        o_pc_inc <= 1'b1;
-      end else begin
-        o_wait_next <= 1'b0;
-        o_pc_inc <= 1'b0;
+      S_WAIT: begin
+        bus.read       = 1'b1;
+        bus.chipselect = 1'b1;
+        if (!stall) begin
+          state_next = S_DONE;
+        end
       end
+      S_DONE: begin
+        bus.read       = 1'b0;
+        bus.chipselect = 1'b0;
+        if (!stall) begin
+          o_pc_inc   = 1'b1;
+          state_next = S_IDLE;
+        end
+      end
+      default: begin
+        state_next     = S_IDLE;
+        o_pc_inc       = 1'b0;
+        bus.read       = 1'b0;
+        bus.chipselect = 1'b0;
+      end
+    endcase
+  end
+
+  always_ff @(posedge bus.clk or posedge bus.reset) begin
+    if (bus.reset) begin
+      state_reg <= S_IDLE;
+    end else begin
+      state_reg <= state_next;
     end
+  end
 
 
+  assign bus.address    = i_pc;
+  assign bus.byteenable = 4'b1111;
 
-
-
-
+  reg debug;
+  always_ff @(posedge bus.clk or posedge bus.reset) begin
+    debug <= 0;
+    if (bus.reset) begin
+      o_inst <= 32'h00000000;
+    end else if (state_reg == S_DONE && !stall) begin
+      o_inst <= bus.readdata;
+      debug  <= 1;
+    end
+  end
 
 endmodule

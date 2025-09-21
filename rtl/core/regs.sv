@@ -7,32 +7,27 @@ module regs (
     input wire [31:0] i_rd_data,
     input wire i_rd_write,
 
-    input wire [4:0] i_rs1_addr,
+    input  wire [ 4:0] i_rs1_addr,
     output wire [31:0] o_rs1_data,
 
-    input wire [4:0] i_rs2_addr,
+    input  wire [ 4:0] i_rs2_addr,
     output wire [31:0] o_rs2_data
 );
 
-  // Define 32 registers, each 32-bits wide
   reg [31:0] registers[31:0];
 
-  // Synchronous reset and write operations
   always_ff @(posedge i_clk) begin
     if (i_rst) begin
-      // Reset all registers to zero
       integer i;
       for (i = 0; i < 32; i = i + 1) begin
         registers[i] <= 32'd0;
       end
-    end
-    else if (i_rd_write && i_clk_en) begin
-      // Write data to the specified register address
+    end else if (i_rd_write) begin
       registers[i_rd_addr] <= i_rd_data;
+      $display("SIM INFO @ %0t: Writing 0x%h to register x%d", $time, i_rd_data, i_rd_addr);
     end
   end
 
-  // Read data from registers
   assign o_rs1_data = (i_rs1_addr != 0) ? registers[i_rs1_addr] : 32'd0;
   assign o_rs2_data = (i_rs2_addr != 0) ? registers[i_rs2_addr] : 32'd0;
 

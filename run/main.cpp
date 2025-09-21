@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
   contextp->commandArgs(argc, argv);
   tfp = new VerilatedFstC;
   top = new Vrv32i{contextp};
-  top->trace(tfp, 99);
+  top->trace(tfp, 999);
 
   uart = new UARTSIM(8880);
   uart->setup(0x005161);
@@ -85,20 +85,16 @@ int main(int argc, char **argv) {
 
   // while (!contextp->gotFinish()) {
   // while (true) {
-  for (int i = 0; i < 10000; i++) {
+  for (int i = 0; i < 100; i++) {
     top->i_clk = 1;
     top->eval();
-    if (top->o_booted)
-      tfp->dump(contextp->time());
-    if (top->o_booted)
-      contextp->timeInc(1);
+    tfp->dump(contextp->time());
+    contextp->timeInc(1);
 
     top->i_clk = 0;
     top->eval();
-    if (top->o_booted)
-      tfp->dump(contextp->time());
-    if (top->o_booted)
-      contextp->timeInc(1);
+    tfp->dump(contextp->time());
+    contextp->timeInc(1);
 
     top->i_rx = (*uart)(top->o_tx);
   }

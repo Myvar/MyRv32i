@@ -4,11 +4,19 @@ python automation/rom.py ./firmware/obj_dir/test.bin > rtl/core/rom/rom.svh
 rm ./run/obj_dir/Vrv32i
 cd run
 svFiles=(
-    ../rtl/core/*.sv
-    ../rtl/core/rom/*.sv
-    ../rtl/core/generated/*.sv
-    ../rtl/components/*.sv
-    ../rtl/*.sv
+  ../rtl/rv32i.sv
+  ../rtl/core/core.sv
+  ../rtl/core/decode.sv
+  ../rtl/core/execute.sv
+  ../rtl/core/fetch.sv
+  ../rtl/core/local_ram.sv
+  ../rtl/core/lsu.sv
+  ../rtl/core/alu.sv
+  ../rtl/core/regs.sv
+  ../rtl/core/rom/core_rom.sv
+  ../rtl/components/interconnect_1_to_4.sv
+  ../rtl/components/arbiter_2_to_1.sv
+  ../rtl/components/fifo.sv
 )
 vFiles=(../rtl/**/*.v)
 allFiles=("${svFiles[@]}" "${vFiles[@]}")

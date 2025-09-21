@@ -24,3 +24,4 @@ build
 tmp
 fifo
 tmp/rv32i.json
+top/deo-nano/greybox_tmp

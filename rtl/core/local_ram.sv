@@ -3,61 +3,55 @@
 `default_nettype none
 
 module local_ram #(
-    ADDR_WIDTH = 32,
-    DATA_WIDTH = 32,
-    ADDR_COUNT = 1024  /* is devided by 4 for long encoding */
+    parameter int ADDR_WIDTH = 32,
+    parameter int DATA_WIDTH = 32,
+    parameter int ADDR_COUNT = 1024
 ) (
-    input i_clk,
-    input i_clk_en,
-    input i_rst,
-
-    //Read
-    input [ADDR_WIDTH-1:0] i_read_addr,
-    output reg [DATA_WIDTH-1:0] o_read_data,
-
-
-    // Write
-    input i_write_en,
-    input [3:0] i_byte_en,
-    input [ADDR_WIDTH-1:0] i_write_addr,
-    input [DATA_WIDTH-1:0] i_write_data
+    bus_if.slave bus
 );
 
-  //2**ADDR_WIDTH - 1
-  (* ram_style = "block" *)logic [7:0] mem_a[ADDR_COUNT-1:0];
-  (* ram_style = "block" *)logic [7:0] mem_b[ADDR_COUNT-1:0];
-  (* ram_style = "block" *)logic [7:0] mem_c[ADDR_COUNT-1:0];
-  (* ram_style = "block" *)logic [7:0] mem_d[ADDR_COUNT-1:0];
+  localparam int WORD_ADDR_WIDTH = $clog2(ADDR_COUNT);
 
+  (* ram_style = "block" *) logic [7:0] mem_a[ADDR_COUNT-1:0];
+  (* ram_style = "block" *) logic [7:0] mem_b[ADDR_COUNT-1:0];
+  (* ram_style = "block" *) logic [7:0] mem_c[ADDR_COUNT-1:0];
+  (* ram_style = "block" *) logic [7:0] mem_d[ADDR_COUNT-1:0];
 
-  always_ff @(posedge i_clk)
-    if (i_clk_en)
-      if (i_write_en)
-        if (i_byte_en[0]) begin
-          mem_a[i_write_addr] <= i_write_data[7:0];
-          $display("SB: ram[%d] = %d", i_write_addr, i_write_data[7:0]);
-        end
+  logic [WORD_ADDR_WIDTH-1:0] word_addr;
+  assign word_addr = bus.address[WORD_ADDR_WIDTH+1:2];
 
-
-  always_ff @(posedge i_clk)
-    if (i_clk_en)
-      if (i_write_en) if (i_byte_en[1]) mem_b[i_write_addr] <= i_write_data[15:8];
-
-
-  always_ff @(posedge i_clk)
-    if (i_clk_en)
-      if (i_write_en) if (i_byte_en[2]) mem_c[i_write_addr] <= i_write_data[23:16];
-
-
-  always_ff @(posedge i_clk)
-    if (i_clk_en)
-      if (i_write_en) if (i_byte_en[3]) mem_d[i_write_addr] <= i_write_data[31:24];
-
-
-  always_ff @(posedge i_clk) begin
-    o_read_data <= {mem_d[i_read_addr], mem_c[i_read_addr], mem_b[i_read_addr], mem_a[i_read_addr]};
-    /*if (i_read_addr == 88) $display("LOAD: %d <= ram[%d]", o_read_data, i_read_addr);*/
+  always_ff @(posedge bus.clk) begin
+    if (bus.write && bus.byteenable[0]) begin
+      mem_a[word_addr] <= bus.writedata[7:0];
+    end
   end
 
-endmodule
+  always_ff @(posedge bus.clk) begin
+    if (bus.write && bus.byteenable[1]) begin
+      mem_b[word_addr] <= bus.writedata[15:8];
+    end
+  end
 
+  always_ff @(posedge bus.clk) begin
+    if (bus.write && bus.byteenable[2]) begin
+      mem_c[word_addr] <= bus.writedata[23:16];
+    end
+  end
+
+  always_ff @(posedge bus.clk) begin
+    if (bus.write && bus.byteenable[3]) begin
+      mem_d[word_addr] <= bus.writedata[31:24];
+
+      $display("SIM INFO @ %0t: Writing %d to address %d in ram", $time, bus.writedata[31:24],
+               bus.address);
+    end
+  end
+
+  always_ff @(posedge bus.clk) begin
+    bus.readdata <= {mem_d[word_addr], mem_c[word_addr], mem_b[word_addr], mem_a[word_addr]};
+
+  end
+
+  assign bus.waitrequest = 1'b0;
+
+endmodule

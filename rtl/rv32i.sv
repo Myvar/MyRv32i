@@ -14,15 +14,19 @@ module rv32i (
     //Booted
     output o_booted
 );
-  core u_core (
-      .i_clk(i_clk),
-      .i_clk_en(i_clk_en),
-      .i_rst(i_rst)
+
+
+  domain_if domain (
+      .i_clk,
+      .i_clk_en,
+      .i_rst
   );
 
+  core u_core (
+      .domain,
+      .o_booted
+  );
 
-  //tmp
-  assign o_booted = 1'b1;
 
 `ifdef TESTING1
   always @(posedge i_clk) begin
